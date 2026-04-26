@@ -15,12 +15,12 @@
        @mouseleave="onMouseUp"
     >
       <div
-         v-for="(card, index) in cards"
-         :key="index"
+         v-for="item in visibleCards"
+         :key="item.index"
          class="card"
-         :style="getCardStyle(index)"
-         :class="{ selected: selectedCards.includes(index) }"
-         @click="selectCard(index)"
+         :style="getCardStyle(item.index)"
+         :class="{ selected: selectedCards.includes(item.index) }"
+         @click="selectCard(item.index)"
         >
           ✦
         </div>
@@ -38,6 +38,7 @@
 <script setup>
 let moved = false
 import { ref } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { selectedCards as globalSelected } from '../store'
 
@@ -57,6 +58,7 @@ const onMouseMove = (e) => {
   const moveX = e.clientX
   offsetX.value += (moveX - startX) * 0.1
   startX = moveX
+  offsetX.value = Math.max(-39, Math.min(39, offsetX.value))
 }
 
 const onMouseUp = () => {
@@ -71,9 +73,10 @@ const onTouchMove = (e) => {
   const moveX = e.touches[0].clientX
   offsetX.value += (moveX - startX) * 0.1
   startX = moveX
+  offsetX.value = Math.max(-39, Math.min(39, offsetX.value))
 }
 
-const centerIndex = 5  // 中间卡牌位置（10张的话大概是5）
+const centerIndex = 39  // 中间卡牌位置（78张的话大概是39）
 
 const getCardStyle = (index) => {
   const offset = index - centerIndex + offsetX.value
@@ -104,8 +107,8 @@ const getCardStyle = (index) => {
 }
 const router = useRouter()
 
-// 模拟 10 张牌
-const cards = ref(Array(10).fill(0))
+// 模拟 78张牌
+const cards = ref(Array.from({ length: 78 }, (_, i) => i))
 
 // 选中的卡牌
 const selectedCards = ref([])
@@ -132,6 +135,15 @@ const selectCard = (index) => {
   }
 }
 
+const visibleCards = computed(() => {
+  const range = 8  // 左右各显示8张（共17张）
+
+  const center = centerIndex + Math.round(offsetX.value)
+
+  return cards.value
+    .map((card, index) => ({ card, index }))
+    .filter(item => Math.abs(item.index - center) < range)
+})
 </script>
 
 <style scoped>
