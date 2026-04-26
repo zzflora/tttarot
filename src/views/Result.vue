@@ -18,15 +18,20 @@
 
           <!-- 正面 -->
           <div class="front">
-            {{ getCardName(card) }}
-          </div>
+                <div>{{ positions[index] }}</div>
+                <div>{{ cards[index].name }}</div>
+                <div>{{ orientations[index] ? '正位' : '逆位' }}</div>
+           </div>
         </div>
       </div>
     </div>
 
     <!-- 解读 -->
     <div class="interpretation">
-      {{ interpretation }}
+        <div v-for="(card, i) in cards" :key="i">
+          【{{ positions[i] }}】{{ card.name }}（{{ orientations[i] ? '正位' : '逆位' }}）：
+           {{ orientations[i] ? card.meaning : card.reversed }}
+        </div>
     </div>
 
   </div>
@@ -35,16 +40,19 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { selectedCards } from '../store'
+import { userQuestion } from '../store'
 
 // 取数据
 const cards = selectedCards
 
 // 控制翻牌
 const flipped = ref([false, false, false])
-
+const positions = ["过去", "现在", "未来"]
 const flipCard = (index) => {
   flipped.value[index] = true
 }
+
+const orientations = ref([true, true, true]) // true=正位
 
 // 模拟卡牌名称
 const names = [
@@ -58,11 +66,21 @@ const getCardName = (index) => {
 
 // 解读文本
 const interpretation = ref('命运正在向你低语...')
+const aiResult = ref('正在连接命运之流...')
 
+// onMounted(() => {
+//   orientations.value = orientations.value.map(() => Math.random() > 0.5)
+// })
 onMounted(() => {
-  setTimeout(() => {
-    interpretation.value = '你正站在人生的关键节点，选择将决定未来的走向。'
-  }, 1500)
+  aiResult.value = `你所询问的问题「${userQuestion.value}」，在命运中已有回应。
+
+过去的影响显示为${cards[0].name}，暗示着${cards[0].meaning}。
+
+现在你正处于${cards[1].name}的能量之中，意味着${cards[1].meaning}。
+
+未来的发展指向${cards[2].name}，这预示着${cards[2].meaning}。
+
+整体来看，你正站在一个关键转折点，选择将决定未来的方向。`
 })
 </script>
 

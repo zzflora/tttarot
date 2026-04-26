@@ -37,9 +37,11 @@
 
 <script setup>
 let moved = false
+
+import { tarotDeck } from '../tarotData'
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { selectedCards as globalSelected } from '../store'
+import { selectedCards } from '../store'
 
 const offsetX = ref(0)
 let startX = 0
@@ -107,11 +109,13 @@ const getCardStyle = (index) => {
 const router = useRouter()
 
 // 模拟 78张牌
-const cards = ref(Array.from({ length: 78 }, (_, i) => i))
+// const cards = ref(Array.from({ length: 78 }, (_, i) => i))
+// const cards = ref(tarotDeck)
+const cards = selectedCards.value.map(i => tarotDeck[i])
 
-onMounted(() => {
-  console.log('cards.length', cards.value.length)
-})
+// onMounted(() => {
+//   console.log('cards.length', cards.value.length)
+// })
 // 选中的卡牌
 const selectedCards = ref([])
 

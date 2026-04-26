@@ -13,14 +13,23 @@
     <button class="start-btn" @click="goDraw">
       ✦ 缘起占卜 ✦
     </button>
+
+    <input v-model="question" placeholder="请输入你想占卜的问题..." />
   </div>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 
+import { userQuestion } from '../store'
+
+const start = () => {
+  userQuestion.value = question.value
+  router.push('/draw')
+}
 const router = useRouter()
-
+const question = ref('')
 const goDraw = () => {
   router.push('/draw')
 }
@@ -94,4 +103,6 @@ const goDraw = () => {
   background: rgba(255,255,255,0.18);
   transform: scale(1.05);
 }
+
+
 </style>
