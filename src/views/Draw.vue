@@ -37,8 +37,7 @@
 
 <script setup>
 let moved = false
-import { ref } from 'vue'
-import { computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { selectedCards as globalSelected } from '../store'
 
@@ -110,6 +109,9 @@ const router = useRouter()
 // 模拟 78张牌
 const cards = ref(Array.from({ length: 78 }, (_, i) => i))
 
+onMounted(() => {
+  console.log('cards.length', cards.value.length)
+})
 // 选中的卡牌
 const selectedCards = ref([])
 
@@ -138,12 +140,13 @@ const selectCard = (index) => {
 const visibleCards = computed(() => {
   const range = 8  // 左右各显示8张（共17张）
 
-  const center = centerIndex + Math.round(offsetX.value)
+  const center = centerIndex - offsetX.value
 
   return cards.value
     .map((card, index) => ({ card, index }))
     .filter(item => Math.abs(item.index - center) < range)
 })
+
 </script>
 
 <style scoped>
