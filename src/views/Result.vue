@@ -4,7 +4,7 @@
     <div class="title">你的命运启示</div>
 
     <!-- 卡牌展示 -->
-    <div class="cards">
+    <div v-if="cards.length === 3" class="cards">
       <div
         v-for="(card, index) in cards"
         :key="index"
@@ -28,22 +28,23 @@
 
     <!-- 解读 -->
     <div class="interpretation">
-        <div v-for="(card, i) in cards" :key="i">
-          【{{ positions[i] }}】{{ card.name }}（{{ orientations[i] ? '正位' : '逆位' }}）：
-           {{ orientations[i] ? card.meaning : card.reversed }}
-        </div>
+        {{ aiResult }}
     </div>
 
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { tarotDeck } from '../tarotData'
 import { ref, onMounted } from 'vue'
 import { selectedCards } from '../store'
 import { userQuestion } from '../store'
 
 // 取数据
-const cards = selectedCards
+const cards = computed(() =>
+  selectedCards.value.map(i => tarotDeck[i])
+)
 
 // 控制翻牌
 const flipped = ref([false, false, false])
@@ -54,33 +55,27 @@ const flipCard = (index) => {
 
 const orientations = ref([true, true, true]) // true=正位
 
-// 模拟卡牌名称
-const names = [
-  '愚者', '魔术师', '女祭司', '皇后', '皇帝',
-  '教皇', '恋人', '战车', '力量', '隐者'
-]
-
-const getCardName = (index) => {
-  return names[index % names.length]
-}
 
 // 解读文本
-const interpretation = ref('命运正在向你低语...')
 const aiResult = ref('正在连接命运之流...')
 
 // onMounted(() => {
 //   orientations.value = orientations.value.map(() => Math.random() > 0.5)
 // })
 onMounted(() => {
+  orientations.value = orientations.value.map(() => Math.random() > 0.5)
+
+  if (cards.value.length < 3) return
+
   aiResult.value = `你所询问的问题「${userQuestion.value}」，在命运中已有回应。
 
-过去的影响显示为${cards[0].name}，暗示着${cards[0].meaning}。
+过去的影响显示为${cards.value[0].name}，暗示着${cards.value[0].meaning}。
 
-现在你正处于${cards[1].name}的能量之中，意味着${cards[1].meaning}。
+现在你正处于${cards.value[1].name}的能量之中，意味着${cards.value[1].meaning}。
 
-未来的发展指向${cards[2].name}，这预示着${cards[2].meaning}。
+未来的发展指向${cards.value[2].name}，这预示着${cards.value[2].meaning}。
 
-整体来看，你正站在一个关键转折点，选择将决定未来的方向。`
+整体来看，你正站在人生的关键节点，选择将决定未来的走向。`
 })
 </script>
 
@@ -129,15 +124,35 @@ onMounted(() => {
 }
 
 /* 正反面 */
-.front, .back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border-radius: 10px;
+.front {
+  background: #fff;
+  color: #000;
+  transform: rotateY(180deg);
+
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  backface-visibility: hidden;
+  align-items: center;
+
+  gap: 6px;
+  text-align: center;
+  padding: 8px;
+}
+
+/* 三行文字优化 */
+.front div:nth-child(1) {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.front div:nth-child(2) {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.front div:nth-child(3) {
+  font-size: 12px;
+  color: #9333ea;
 }
 
 /* 背面 */

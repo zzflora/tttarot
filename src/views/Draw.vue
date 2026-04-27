@@ -111,13 +111,18 @@ const router = useRouter()
 // 模拟 78张牌
 // const cards = ref(Array.from({ length: 78 }, (_, i) => i))
 // const cards = ref(tarotDeck)
-const cards = selectedCards.value.map(i => tarotDeck[i])
+// const cards = selectedCards.value.map(i => tarotDeck[i])
+const cards = ref(tarotDeck)
 
 // onMounted(() => {
 //   console.log('cards.length', cards.value.length)
 // })
 // 选中的卡牌
-const selectedCards = ref([])
+// const selectedCards = ref([])
+
+onMounted(() => {
+  selectedCards.value = []
+})
 
 const selectCard = (index) => {
   if (moved) {
@@ -132,9 +137,6 @@ const selectCard = (index) => {
   }
 
   if (selectedCards.value.length === 3) {
-    // 👇 存到全局
-    globalSelected.value = [...selectedCards.value]
-
     setTimeout(() => {
       router.push('/loading')
     }, 800)

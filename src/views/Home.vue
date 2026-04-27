@@ -14,7 +14,11 @@
       ✦ 缘起占卜 ✦
     </button>
 
-    <input v-model="question" placeholder="请输入你想占卜的问题..." />
+    <input
+      v-model="question"
+      class="question-input"
+      placeholder="在心中默念你的问题..."
+    />
   </div>
 </template>
 
@@ -104,5 +108,33 @@ const goDraw = () => {
   transform: scale(1.05);
 }
 
+.question-input {
+  width: 260px;
+  padding: 12px 16px;
+  margin-top: 30px;
 
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.2);
+
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+
+  color: white;
+  font-size: 14px;
+  text-align: center;
+
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+/* 聚焦效果 */
+.question-input:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 12px rgba(168,85,247,0.7);
+}
+
+/* placeholder */
+.question-input::placeholder {
+  color: rgba(255,255,255,0.4);
+}
 </style>
